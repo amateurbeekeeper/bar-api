@@ -61,8 +61,13 @@ export class BrowserlessService {
   ): Promise<FormSubmissionResult> {
     const mutation = `
       mutation SubmitKeelaForm {
-        goto(url: "${this.keelaEmbedUrl}") {
+        goto(url: "${this.keelaEmbedUrl}", waitUntil: networkidle) {
           status
+        }
+
+        waitForPageLoad: waitForSelector(selector: "input[placeholder*='First'], input[placeholder*='Last'], input[placeholder*='Email']", timeout: 15000) {
+          selector
+          time
         }
 
         typeFirstName: type(selector: "input[placeholder*='First']", text: "${signupData.firstName}") {
