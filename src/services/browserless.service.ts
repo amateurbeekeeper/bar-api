@@ -61,7 +61,7 @@ export class BrowserlessService {
   ): Promise<FormSubmissionResult> {
     const mutation = `
       mutation SubmitKeelaForm {
-        goto(url: "${this.keelaEmbedUrl}", waitUntil: networkidle) {
+        goto(url: "${this.keelaEmbedUrl}", waitUntil: networkIdle) {
           status
         }
 
