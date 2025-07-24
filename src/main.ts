@@ -78,3 +78,13 @@ export default async function handler(req: any, res: any) {
     }
   }
 }
+
+// Local development server startup
+if (process.env.NODE_ENV !== 'production') {
+  bootstrap().then(async (app) => {
+    const port = process.env.PORT || 3000;
+    await app.listen(port);
+    console.log(`🚀 Application is running on: http://localhost:${port}`);
+    console.log(`📚 Swagger documentation: http://localhost:${port}/docs`);
+  });
+}
