@@ -1,0 +1,51 @@
+### Test Signup API
+
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "isScientist": true
+}
+
+###
+
+### Test Signup API - Non-Scientist
+
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith@example.com",
+  "isScientist": false
+}
+
+###
+
+### Test Invalid Email
+
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "firstName": "Invalid",
+  "lastName": "Email",
+  "email": "invalid-email",
+  "isScientist": true
+}
+
+###
+
+### Test Missing Fields
+
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "firstName": "Missing",
+  "email": "missing@example.com"
+} 
