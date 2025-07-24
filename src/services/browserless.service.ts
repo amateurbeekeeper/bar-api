@@ -19,6 +19,23 @@ export class BrowserlessService {
     try {
       this.logger.log(`Starting form submission for ${signupData.email}`);
 
+      // Check if we have a valid token
+      if (!this.browserlessToken || this.browserlessToken === 'test_token') {
+        this.logger.warn('No valid Browserless token configured - returning mock success');
+        return {
+          success: true,
+          message: "Mock form submission successful (no Browserless token configured)",
+          data: {
+            firstName: signupData.firstName,
+            lastName: signupData.lastName,
+            email: signupData.email,
+            isScientist: signupData.isScientist,
+            submittedAt: new Date().toISOString(),
+            mock: true
+          }
+        };
+      }
+
       const sessionId = await this.createSession();
       if (!sessionId) {
         return {
@@ -55,6 +72,9 @@ export class BrowserlessService {
     `;
 
     try {
+      this.logger.log(`Attempting to create session with URL: ${this.browserlessUrl}`);
+      this.logger.log(`Token configured: ${this.browserlessToken ? 'Yes' : 'No'}`);
+
       const response = await fetch(this.browserlessUrl, {
         method: "POST",
         headers: {
@@ -64,6 +84,18 @@ export class BrowserlessService {
         body: JSON.stringify({ query: mutation }),
       });
 
+      this.logger.log(`Response status: ${response.status}`);
+      this.logger.log(`Response headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`);
+
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        this.logger.error(`Non-JSON response received: ${text.substring(0, 200)}...`);
+        this.logger.error(`This usually means the API URL is wrong or authentication failed`);
+        return null;
+      }
+
       const result: BrowserlessResponse = await response.json();
 
       if (result.errors) {
@@ -71,7 +103,14 @@ export class BrowserlessService {
         return null;
       }
 
-      return result.data?.createSession?.sessionId;
+      const sessionId = result.data?.createSession?.sessionId;
+      if (sessionId) {
+        this.logger.log(`Session created successfully: ${sessionId}`);
+      } else {
+        this.logger.error("No session ID in response:", result);
+      }
+
+      return sessionId;
     } catch (error) {
       this.logger.error("Error creating session:", error);
       return null;
