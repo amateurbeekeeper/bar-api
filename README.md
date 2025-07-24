@@ -117,17 +117,12 @@ This repository is connected to Vercel for automatic deployments:
 If you ever need to deploy manually:
 
 ```bash
-# Option 1: Use the deployment script
-./deploy.sh
-
-# Option 2: Manual commands
 npm run build
 vercel --prod
 ```
 
 ### Configuration Files
 - **`vercel.json`** - Vercel deployment configuration
-- **`deploy.sh`** - Deployment script for manual use
 - **`.vercelignore`** - Files excluded from deployment
 
 ### Environment Variables
