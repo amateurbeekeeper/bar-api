@@ -61,13 +61,8 @@ export class BrowserlessService {
   ): Promise<FormSubmissionResult> {
     const mutation = `
       mutation SubmitKeelaForm {
-        goto(url: "${this.keelaEmbedUrl}", waitUntil: networkIdle) {
+        goto(url: "${this.keelaEmbedUrl}") {
           status
-        }
-
-        waitForPageLoad: waitForSelector(selector: "input[placeholder*='First'], input[placeholder*='Last'], input[placeholder*='Email']", timeout: 15000) {
-          selector
-          time
         }
 
         typeFirstName: type(selector: "input[placeholder*='First']", text: "${signupData.firstName}") {
@@ -82,7 +77,7 @@ export class BrowserlessService {
           time
         }
 
-        waitForRadios: waitForSelector(selector: "label.form-check-label", timeout: 10000) {
+        waitForRadios: waitForSelector(selector: "label.form-check-label", timeout: 5000) {
           height
           selector
           time
@@ -93,7 +88,7 @@ export class BrowserlessService {
 
         ${this.getRadioButtonSelection(signupData.isScientist)}
 
-        waitForButton: waitForSelector(selector: "button.btn-form-primary", timeout: 10000) {
+        waitForButton: waitForSelector(selector: "button.btn-form-primary", timeout: 5000) {
           height
           selector
           time
@@ -106,7 +101,7 @@ export class BrowserlessService {
           time
         }
 
-        waitAfterSubmit: waitForNavigation(timeout: 10000) {
+        waitAfterSubmit: waitForNavigation(timeout: 5000) {
           status
           time
           text
