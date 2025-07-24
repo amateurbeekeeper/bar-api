@@ -105,6 +105,37 @@ Submits user registration data to the Keela form via Browserless automation.
 }
 ```
 
+## 🚀 Deployment
+
+### Automatic Deployment (Current Setup)
+This repository is connected to Vercel for automatic deployments:
+- **Push to GitHub** → Automatic deployment to Vercel
+- **Branch**: `main` triggers production deployment
+- **No manual steps required** - just commit and push!
+
+### Manual Deployment (If Needed)
+If you ever need to deploy manually:
+
+```bash
+# Option 1: Use the deployment script
+./deploy.sh
+
+# Option 2: Manual commands
+npm run build
+vercel --prod
+```
+
+### Configuration Files
+- **`vercel.json`** - Vercel deployment configuration
+- **`deploy.sh`** - Deployment script for manual use
+- **`.vercelignore`** - Files excluded from deployment
+
+### Environment Variables
+Set these in your Vercel dashboard:
+- `BROWSERLESS_TOKEN` - Your Browserless API token
+- `BROWSERLESS_URL` - Browserless GraphQL endpoint (optional)
+- `KEELA_EMBED_URL` - Your Keela form URL (optional)
+
 ## 🚧 Next Steps
 
 - [ ] Connect the Webflow form to our endpoint  
