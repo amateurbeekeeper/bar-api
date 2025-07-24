@@ -8,8 +8,7 @@ import {
 @Injectable()
 export class BrowserlessService {
   private readonly logger = new Logger(BrowserlessService.name);
-  private readonly browserlessUrl =
-    process.env.BROWSERLESS_URL || "https://chrome.browserless.io/graphql";
+  private readonly browserlessUrl = "https://production-sfo.browserless.io/chromium/bql";
   private readonly browserlessToken = process.env.BROWSERLESS_TOKEN;
   private readonly keelaEmbedUrl =
     process.env.KEELA_EMBED_URL ||
