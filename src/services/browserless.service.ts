@@ -8,28 +8,37 @@ import {
 @Injectable()
 export class BrowserlessService {
   private readonly logger = new Logger(BrowserlessService.name);
-  private readonly browserlessUrl = "https://production-sfo.browserless.io/chromium/bql";
+  private readonly browserlessUrl =
+    "https://production-sfo.browserless.io/chromium/bql";
   private readonly browserlessToken = process.env.BROWSERLESS_TOKEN;
-  private readonly keelaEmbedUrl = "https://signup-aus.keela.co/embed/GmjpBXbNAsdcsaRco";
+  private readonly keelaEmbedUrl =
+    "https://signup-aus.keela.co/embed/GmjpBXbNAsdcsaRco";
 
   async submitForm(signupData: SignupDto): Promise<FormSubmissionResult> {
     try {
       this.logger.log(`Starting form submission for ${signupData.email}`);
 
       // Check if we have a valid token
-      if (!this.browserlessToken || this.browserlessToken === 'test_token' || this.browserlessToken === '') {
-        this.logger.warn('No valid Browserless token configured - returning mock success');
+      if (
+        !this.browserlessToken ||
+        this.browserlessToken === "test_token" ||
+        this.browserlessToken === ""
+      ) {
+        this.logger.warn(
+          "No valid Browserless token configured - returning mock success",
+        );
         return {
           success: true,
-          message: "Mock form submission successful (no Browserless token configured)",
+          message:
+            "Mock form submission successful (no Browserless token configured)",
           data: {
             firstName: signupData.firstName,
             lastName: signupData.lastName,
             email: signupData.email,
             isScientist: signupData.isScientist,
             submittedAt: new Date().toISOString(),
-            mock: true
-          }
+            mock: true,
+          },
         };
       }
 
@@ -46,8 +55,6 @@ export class BrowserlessService {
       };
     }
   }
-
-
 
   private async executeFormSubmission(
     signupData: SignupDto,
@@ -109,6 +116,9 @@ export class BrowserlessService {
     `;
 
     try {
+      this.logger.log(`Sending request to Browserless API: ${this.browserlessUrl}`);
+      this.logger.log(`Token configured: ${this.browserlessToken ? 'Yes' : 'No'}`);
+
       const response = await fetch(this.browserlessUrl, {
         method: "POST",
         headers: {
@@ -117,6 +127,21 @@ export class BrowserlessService {
         },
         body: JSON.stringify({ query: mutation }),
       });
+
+      this.logger.log(`Response status: ${response.status}`);
+      this.logger.log(`Response headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`);
+
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        this.logger.error(`Non-JSON response received: ${text.substring(0, 500)}...`);
+        this.logger.error(`This usually means the API URL is wrong or authentication failed`);
+        return {
+          success: false,
+          message: `Browserless API returned HTML instead of JSON. Check URL and authentication.`,
+        };
+      }
 
       const result: BrowserlessResponse = await response.json();
 
@@ -174,9 +199,7 @@ export class BrowserlessService {
     }
   }
 
-  private getRadioButtonSelection(
-    isScientist: boolean,
-  ): string {
+  private getRadioButtonSelection(isScientist: boolean): string {
     const selector = isScientist ? "label[for$='true']" : "label[for$='false']";
 
     return `
@@ -185,6 +208,4 @@ export class BrowserlessService {
       }
     `;
   }
-
-
 }
