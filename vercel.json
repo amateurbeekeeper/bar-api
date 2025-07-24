@@ -1,26 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "functions": {
-    "dist/index.js": {
-      "maxDuration": 30,
-      "memory": 1024
+  "builds": [
+    {
+      "src": "dist/index.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
-    {
-      "src": "/api",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/signup",
-      "dest": "dist/index.js"
-    },
     {
       "src": "/(.*)",
       "dest": "dist/index.js"
