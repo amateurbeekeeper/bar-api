@@ -1,92 +1,110 @@
-# 🐭 BAR Keela Bridge – Maintain Styling, Submit Seamlessly (at Zero Cost)
+# �� BAR Keela Bridge – NestJS API with Browserless Automation
 
-This small API project was built for **Beyond Animal Research (BAR)** to let you:
+A production-ready NestJS API that bridges your custom forms to Keela CRM using Browserless GraphQL automation. Built for **Beyond Animal Research (BAR)** to maintain brand consistency while seamlessly submitting data to Keela.
 
-### ✅ Keep the beautiful, styled newsletter form on your site  
-### ✅ Still submit the form into **Keela**, without showing Keela's default embed  
-### ✅ Avoid **any ongoing cost** — no paid services, no server hosting fees  
-### ✅ Use modern tech & AI to research, test, and ship faster  
+## ✨ Features
 
----
+- 🚀 **Zero-Cost Solution** - No paid integrations, no Keela API fees
+- 🎨 **Brand Consistency** - Keep your beautiful Webflow forms, hide Keela embeds
+- 🤖 **Browserless Automation** - Headless browser automation via GraphQL
+- 📚 **Swagger Documentation** - Interactive API docs with try-it-out functionality
+- ☁️ **Vercel Deployment** - Automatic deployments from GitHub
+- 🔒 **TypeScript** - Full type safety and modern development experience
 
-## 🧩 Why this exists
+## 🏗️ Architecture
 
-BAR wanted to:
-- Keep the **clean Webflow-styled form** users already love
-- Still submit that data into **Keela**, their actual CRM platform
-- **Hide** the original Keela embed to keep brand consistency
-- **Avoid any paid integrations** (e.g. Zapier, Make, or paying for Keela API access)
-- Use tools that are modern, maintainable, and fun for developers too
+```
+Webflow Form → NestJS API → Browserless GraphQL → Keela Form
+```
 
-So this project does exactly that, using:
-- **Vercel** – for free, fast API hosting  
-- **NestJS** – a scalable Node framework (and portfolio-friendly)  
-- **Browserless** – a headless browser (via GraphQL) that simulates a real user submitting the Keela form behind the scenes
+1. **Webflow Form** collects user data (name, email, preferences)
+2. **NestJS API** receives the data and validates it
+3. **Browserless GraphQL** automates form submission to Keela
+4. **Keela CRM** receives the data without users seeing the embed
 
----
+## 🛠️ Tech Stack
 
-## ⚙️ How it works
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **API Framework** | [NestJS](https://nestjs.com/) | Scalable Node.js framework with TypeScript |
+| **Hosting** | [Vercel](https://vercel.com/) | Serverless deployment with automatic scaling |
+| **Browser Automation** | [Browserless](https://www.browserless.io/) | Headless Chrome via GraphQL API |
+| **API Documentation** | [Swagger/OpenAPI](https://swagger.io/) | Interactive documentation and testing |
+| **Frontend** | [Webflow](https://webflow.com/) | Custom styled forms |
+| **CRM** | [Keela](https://keela.co/) | Data destination |
 
-1. Your Webflow form collects `name`, `email`, etc
-2. That form sends data to our custom **Vercel API endpoint**
-3. The API runs a **BrowserQL script** (via Browserless)
-4. Browserless:
-   - Visits the Keela form
-   - Fills it out with the submitted values
-   - Clicks the radio button and submit
-5. The user never sees Keela — just your clean design ✅
+## 📦 Project Structure
 
----
+```
+bar-api/
+├── src/
+│   ├── controllers/
+│   │   └── signup.controller.ts    # POST /signup endpoint
+│   ├── services/
+│   │   └── browserless.service.ts  # Browserless GraphQL integration
+│   ├── types/
+│   │   └── signup.dto.ts          # TypeScript interfaces & Swagger docs
+│   ├── app.module.ts              # Main application module
+│   ├── main.ts                    # Local development entry
+│   └── index.ts                   # Vercel serverless entry
+├── package.json                   # Dependencies and scripts
+├── vercel.json                    # Vercel deployment configuration
+├── .vercelignore                  # Deployment optimization
+├── test-api.http                  # API testing file
+└── README.md                      # This documentation
+```
 
-## 🧾 Tech Stack
+## 🚀 Quick Start
 
-| Layer              | Tool                                                                 |
-|-------------------|----------------------------------------------------------------------|
-| API Hosting        | [Vercel](https://vercel.com/) (free tier)                            |
-| Backend Framework  | [NestJS](https://nestjs.com/) with `@nestjs/platform-serverless`     |
-| Browser Automation | [Browserless](https://www.browserless.io/) with [BrowserQL](https://www.browserless.io/browserql) |
-| API Documentation  | [Swagger/OpenAPI](https://swagger.io/) with interactive UI            |
-| Frontend           | [Webflow](https://webflow.com/) (existing site)                      |
+### 1. Clone & Install
+```bash
+git clone https://github.com/amateurbeekeeper/bar-api.git
+cd bar-api
+npm install
+```
 
----
+### 2. Environment Setup
+```bash
+cp env.example .env
+# Edit .env with your Browserless token and Keela URL
+```
 
-## 📦 Zero-Cost Mission
+### 3. Local Development
+```bash
+npm run start:dev
+# API available at http://localhost:3000
+# Swagger UI at http://localhost:3000/api
+```
 
-- No Keela API required
-- No need to pay for Make, Zapier, or hosted Puppeteer
-- Free tier of Browserless (1k units/month is enough)
-- Free tier of Vercel (plenty for this use case)
-
----
+### 4. Test the API
+```bash
+curl -X POST http://localhost:3000/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "isScientist": true
+  }'
+```
 
 ## 📚 API Documentation
 
 ### Swagger UI
-
-The API includes comprehensive Swagger/OpenAPI documentation:
-
-- **Local Development**: http://localhost:3000/api
+- **Local**: http://localhost:3000/api
 - **Production**: https://your-vercel-domain.vercel.app/api
 
-The Swagger UI provides:
-- Interactive API documentation
-- Request/response examples
-- Try-it-out functionality
-- Schema definitions
-- Error response documentation
-
-### API Endpoints
+### Endpoints
 
 #### POST /signup
+Submits user registration data to Keela via Browserless automation.
 
-Submits user registration data to the Keela form via Browserless automation.
-
-**Request Body:**
+**Request:**
 ```json
 {
   "firstName": "John",
-  "lastName": "Doe",
-  "email": "john.doe@example.com",
+  "lastName": "Doe", 
+  "email": "john@example.com",
   "isScientist": true
 }
 ```
@@ -97,7 +115,7 @@ Submits user registration data to the Keela form via Browserless automation.
   "success": true,
   "message": "Form submitted successfully",
   "data": {
-    "email": "john.doe@example.com",
+    "email": "john@example.com",
     "firstName": "John",
     "lastName": "Doe",
     "isScientist": true
@@ -105,25 +123,42 @@ Submits user registration data to the Keela form via Browserless automation.
 }
 ```
 
+**Error Response (400/500):**
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "error": "Error type"
+}
+```
+
+## 🔧 Browserless Integration
+
+The service uses Browserless GraphQL to:
+
+1. **Create Session** → Initialize headless browser
+2. **Navigate** → Go to Keela form URL
+3. **Fill Form** → Type into firstName, lastName, email fields
+4. **Select Radio** → Click appropriate scientist/non-scientist option
+5. **Submit** → Click submit button
+6. **Wait** → Wait for navigation and success indicators
+7. **Cleanup** → Close browser session
+
+### GraphQL Mutations Used
+- `createSession` - Browser session management
+- `goto` - Navigate to form URL
+- `type` - Fill form fields
+- `click` - Submit form and select options
+- `waitForNavigation` - Wait for form submission
+- `html` - Get final page content for success detection
+
 ## 🚀 Deployment
 
-### Automatic Deployment (Current Setup)
+### Automatic Deployment
 This repository is connected to Vercel for automatic deployments:
 - **Push to GitHub** → Automatic deployment to Vercel
 - **Branch**: `main` triggers production deployment
-- **No manual steps required** - just commit and push!
-
-### Manual Deployment (If Needed)
-If you ever need to deploy manually:
-
-```bash
-npm run build
-vercel --prod
-```
-
-### Configuration Files
-- **`vercel.json`** - Vercel deployment configuration
-- **`.vercelignore`** - Files excluded from deployment
+- **Zero manual steps** - just commit and push!
 
 ### Environment Variables
 Set these in your Vercel dashboard:
@@ -131,16 +166,79 @@ Set these in your Vercel dashboard:
 - `BROWSERLESS_URL` - Browserless GraphQL endpoint (optional)
 - `KEELA_EMBED_URL` - Your Keela form URL (optional)
 
-## 🚧 Next Steps
+### Manual Deployment
+```bash
+npm run build
+vercel --prod
+```
 
-- [ ] Connect the Webflow form to our endpoint  
-- [ ] Handle checkbox/radio conditionals dynamically  
-- [ ] Improve fallback/error messaging  
-- [ ] Explore self-hosted alternatives for full ownership (optional)
+## 💰 Cost Analysis
+
+| Service | Cost | Usage |
+|---------|------|-------|
+| **Vercel** | Free | 100GB bandwidth/month |
+| **Browserless** | Free | 1,000 units/month |
+| **GitHub** | Free | Public repository |
+| **Total** | **$0/month** | Perfect for small to medium usage |
+
+## 🔒 Security & Best Practices
+
+- **Input Validation** - All fields validated before processing
+- **Error Handling** - Comprehensive error responses
+- **Environment Variables** - Sensitive data kept secure
+- **CORS Configuration** - Cross-origin request handling
+- **TypeScript** - Type safety throughout the application
+
+## 🧪 Testing
+
+### Local Testing
+Use the included `test-api.http` file with VS Code REST Client or similar tools.
+
+### API Testing
+```bash
+# Test successful signup
+curl -X POST http://localhost:3000/signup \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Jane","lastName":"Smith","email":"jane@example.com","isScientist":false}'
+
+# Test validation error
+curl -X POST http://localhost:3000/signup \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Invalid","email":"invalid-email"}'
+```
+
+## 🚧 Development
+
+### Available Scripts
+```bash
+npm run start:dev    # Development server with hot reload
+npm run build        # Build for production
+npm run lint         # Run ESLint
+npm run test         # Run tests (when added)
+```
+
+### Adding New Features
+1. Create new controller/service files in `src/`
+2. Add Swagger decorators for documentation
+3. Update `app.module.ts` with new components
+4. Test locally and deploy
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+MIT License - see LICENSE file for details
 
 ---
 
-## 💬 Questions or Feedback?
+## 💬 Support
 
-This was built with ❤️ and a stubborn refusal to let a form ruin a great brand.  
-Let’s keep iterating and make it bulletproof.
+Built with ❤️ for Beyond Animal Research. Questions? Open an issue or reach out to the development team.
+
+**Mission**: Keep beautiful forms, submit to Keela, pay nothing. 🎯
