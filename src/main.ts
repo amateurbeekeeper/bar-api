@@ -7,10 +7,10 @@ let app: any;
 async function bootstrap() {
   try {
     if (!app) {
-      console.log('Creating NestJS application...');
+      console.log("Creating NestJS application...");
       app = await NestFactory.create(AppModule);
 
-      console.log('Enabling CORS...');
+      console.log("Enabling CORS...");
       // Enable CORS for Vercel deployment
       app.enableCors({
         origin: true,
@@ -18,7 +18,7 @@ async function bootstrap() {
         credentials: true,
       });
 
-      console.log('Setting up API documentation...');
+      console.log("Setting up API documentation...");
       // Swagger configuration
       const config = new DocumentBuilder()
         .setTitle("Bar API")
@@ -31,14 +31,14 @@ async function bootstrap() {
         .build();
 
       const document = SwaggerModule.createDocument(app, config);
-      
+
       // Serve OpenAPI JSON for external tools
-      app.use('/docs-json', (req, res) => {
+      app.use("/docs-json", (req, res) => {
         res.json(document);
       });
-      
+
       // Only serve Swagger UI in development
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV !== "production") {
         SwaggerModule.setup("docs", app, document, {
           swaggerOptions: {
             persistAuthorization: true,
@@ -46,7 +46,7 @@ async function bootstrap() {
         });
       } else {
         // In production, serve a simple HTML page with links
-        app.use('/docs', (req, res) => {
+        app.use("/docs", (req, res) => {
           res.send(`
             <!DOCTYPE html>
             <html>
@@ -115,14 +115,14 @@ async function bootstrap() {
         });
       }
 
-      console.log('Initializing application...');
+      console.log("Initializing application...");
       await app.init();
-      console.log('Application initialized successfully');
+      console.log("Application initialized successfully");
     }
     return app;
   } catch (error) {
-    console.error('Bootstrap error:', error);
-    console.error('Bootstrap error stack:', error.stack);
+    console.error("Bootstrap error:", error);
+    console.error("Bootstrap error stack:", error.stack);
     throw error;
   }
 }
@@ -132,33 +132,33 @@ export default async function handler(req: any, res: any) {
   try {
     const app = await bootstrap();
     const expressApp = app.getHttpAdapter().getInstance();
-    
+
     // Handle Vercel's serverless function format
-    if (req.body && typeof req.body === 'string') {
+    if (req.body && typeof req.body === "string") {
       try {
         req.body = JSON.parse(req.body);
       } catch (e) {
         // Ignore parsing errors
       }
     }
-    
+
     return expressApp(req, res);
   } catch (error) {
-    console.error('Handler error:', error);
-    console.error('Error stack:', error.stack);
-    
+    console.error("Handler error:", error);
+    console.error("Error stack:", error.stack);
+
     if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Internal server error',
+      res.status(500).json({
+        error: "Internal server error",
         message: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
 }
 
 // Local development server startup
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   bootstrap().then(async (app) => {
     const port = process.env.PORT || 3000;
     await app.listen(port);

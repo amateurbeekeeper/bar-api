@@ -77,7 +77,7 @@ export class BrowserlessService {
           time
         }
 
-        waitForRadios: waitForSelector(selector: "label.form-check-label", timeout: 5000) {
+        waitForRadios: waitForSelector(selector: "label.form-check-label", timeout: 20000) {
           height
           selector
           time
@@ -88,7 +88,7 @@ export class BrowserlessService {
 
         ${this.getRadioButtonSelection(signupData.isScientist)}
 
-        waitForButton: waitForSelector(selector: "button.btn-form-primary", timeout: 5000) {
+        waitForButton: waitForSelector(selector: "button.btn-form-primary", timeout: 20000) {
           height
           selector
           time
@@ -101,7 +101,7 @@ export class BrowserlessService {
           time
         }
 
-        waitAfterSubmit: waitForNavigation(timeout: 5000) {
+        waitAfterSubmit: waitForNavigation(timeout: 10000) {
           status
           time
           text
