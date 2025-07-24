@@ -20,7 +20,7 @@ export class BrowserlessService {
       this.logger.log(`Starting form submission for ${signupData.email}`);
 
       // Check if we have a valid token
-      if (!this.browserlessToken || this.browserlessToken === 'test_token') {
+      if (!this.browserlessToken || this.browserlessToken === 'test_token' || this.browserlessToken === '') {
         this.logger.warn('No valid Browserless token configured - returning mock success');
         return {
           success: true,
