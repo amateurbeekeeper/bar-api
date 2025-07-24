@@ -49,7 +49,8 @@ async function bootstrap() {
   }
 }
 
-export const handler = async (req: any, res: any) => {
+// Vercel serverless function handler
+const handler = async (req: any, res: any) => {
   try {
     const app = await bootstrap();
     const expressApp = app.getHttpAdapter().getInstance();
@@ -77,3 +78,6 @@ export const handler = async (req: any, res: any) => {
     }
   }
 };
+
+// Export for Vercel
+export default handler;
