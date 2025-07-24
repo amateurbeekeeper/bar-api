@@ -65,7 +65,12 @@ export class BrowserlessService {
           status
         }
 
-        waitForForm: waitForSelector(selector: "input[placeholder*='First']", timeout: 15000) {
+        waitForForm: waitForSelector(selector: "input[placeholder*='First']", timeout: 30000) {
+          selector
+          time
+        }
+
+        waitForFormLoad: waitForSelector(selector: "input[placeholder*='Last'], input[placeholder*='Email']", timeout: 30000) {
           selector
           time
         }
@@ -82,7 +87,7 @@ export class BrowserlessService {
           time
         }
 
-        waitForRadios: waitForSelector(selector: "label.form-check-label", timeout: 5000) {
+        waitForRadios: waitForSelector(selector: "label.form-check-label", timeout: 30000) {
           height
           selector
           time
@@ -95,7 +100,7 @@ export class BrowserlessService {
           time
         }
 
-        waitForButton: waitForSelector(selector: "button.btn-form-primary", timeout: 5000) {
+        waitForButton: waitForSelector(selector: "button.btn-form-primary", timeout: 30000) {
           height
           selector
           time
@@ -108,7 +113,7 @@ export class BrowserlessService {
           time
         }
 
-        waitAfterSubmit: waitForNavigation(timeout: 5000) {
+        waitAfterSubmit: waitForNavigation(timeout: 15000) {
           status
           time
           text
