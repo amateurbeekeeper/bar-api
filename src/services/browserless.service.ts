@@ -36,19 +36,7 @@ export class BrowserlessService {
         };
       }
 
-      const sessionId = await this.createSession();
-      if (!sessionId) {
-        return {
-          success: false,
-          message: "Failed to create browser session",
-        };
-      }
-
-      const result = await this.executeFormSubmission(sessionId, signupData);
-
-      // Clean up session
-      await this.closeSession(sessionId);
-
+      const result = await this.executeFormSubmission(signupData);
       return result;
     } catch (error) {
       this.logger.error(
@@ -62,84 +50,30 @@ export class BrowserlessService {
     }
   }
 
-  private async createSession(): Promise<string | null> {
-    const mutation = `
-      mutation {
-        createSession {
-          sessionId
-        }
-      }
-    `;
 
-    try {
-      this.logger.log(`Attempting to create session with URL: ${this.browserlessUrl}`);
-      this.logger.log(`Token configured: ${this.browserlessToken ? 'Yes' : 'No'}`);
-
-      const response = await fetch(this.browserlessUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.browserlessToken}`,
-        },
-        body: JSON.stringify({ query: mutation }),
-      });
-
-      this.logger.log(`Response status: ${response.status}`);
-      this.logger.log(`Response headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`);
-
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        this.logger.error(`Non-JSON response received: ${text.substring(0, 200)}...`);
-        this.logger.error(`This usually means the API URL is wrong or authentication failed`);
-        return null;
-      }
-
-      const result: BrowserlessResponse = await response.json();
-
-      if (result.errors) {
-        this.logger.error("Failed to create session:", result.errors);
-        return null;
-      }
-
-      const sessionId = result.data?.createSession?.sessionId;
-      if (sessionId) {
-        this.logger.log(`Session created successfully: ${sessionId}`);
-      } else {
-        this.logger.error("No session ID in response:", result);
-      }
-
-      return sessionId;
-    } catch (error) {
-      this.logger.error("Error creating session:", error);
-      return null;
-    }
-  }
 
   private async executeFormSubmission(
-    sessionId: string,
     signupData: SignupDto,
   ): Promise<FormSubmissionResult> {
     const mutation = `
       mutation SubmitKeelaForm {
-        goto(sessionId: "${sessionId}", url: "${this.keelaEmbedUrl}") {
+        goto(url: "${this.keelaEmbedUrl}") {
           status
         }
 
-        typeFirstName: type(sessionId: "${sessionId}", selector: "input[placeholder*='First']", text: "${signupData.firstName}") {
+        typeFirstName: type(selector: "input[placeholder*='First']", text: "${signupData.firstName}") {
           time
         }
 
-        typeLastName: type(sessionId: "${sessionId}", selector: "input[placeholder*='Last']", text: "${signupData.lastName}") {
+        typeLastName: type(selector: "input[placeholder*='Last']", text: "${signupData.lastName}") {
           time
         }
 
-        typeEmail: type(sessionId: "${sessionId}", selector: "input[placeholder*='Email']", text: "${signupData.email}") {
+        typeEmail: type(selector: "input[placeholder*='Email']", text: "${signupData.email}") {
           time
         }
 
-        waitForRadios: waitForSelector(sessionId: "${sessionId}", selector: "label.form-check-label", timeout: 5000) {
+        waitForRadios: waitForSelector(selector: "label.form-check-label", timeout: 5000) {
           height
           selector
           time
@@ -148,9 +82,9 @@ export class BrowserlessService {
           width
         }
 
-        ${this.getRadioButtonSelection(signupData.isScientist, sessionId)}
+        ${this.getRadioButtonSelection(signupData.isScientist)}
 
-        waitForButton: waitForSelector(sessionId: "${sessionId}", selector: "button.btn-form-primary", timeout: 5000) {
+        waitForButton: waitForSelector(selector: "button.btn-form-primary", timeout: 5000) {
           height
           selector
           time
@@ -159,18 +93,18 @@ export class BrowserlessService {
           width
         }
 
-        clickSubmit: click(sessionId: "${sessionId}", selector: "button.btn-form-primary") {
+        clickSubmit: click(selector: "button.btn-form-primary") {
           time
         }
 
-        waitAfterSubmit: waitForNavigation(sessionId: "${sessionId}", timeout: 5000) {
+        waitAfterSubmit: waitForNavigation(timeout: 5000) {
           status
           time
           text
           url
         }
 
-        html(sessionId: "${sessionId}") {
+        html {
           html
           time
         }
@@ -245,37 +179,15 @@ export class BrowserlessService {
 
   private getRadioButtonSelection(
     isScientist: boolean,
-    sessionId: string,
   ): string {
     const selector = isScientist ? "label[for$='true']" : "label[for$='false']";
 
     return `
-      clickRadioLabel: click(sessionId: "${sessionId}", selector: "${selector}") {
+      clickRadioLabel: click(selector: "${selector}") {
         time
       }
     `;
   }
 
-  private async closeSession(sessionId: string): Promise<void> {
-    const mutation = `
-      mutation {
-        closeSession(sessionId: "${sessionId}") {
-          success
-        }
-      }
-    `;
 
-    try {
-      await fetch(this.browserlessUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.browserlessToken}`,
-        },
-        body: JSON.stringify({ query: mutation }),
-      });
-    } catch (error) {
-      this.logger.warn("Failed to close session:", error);
-    }
-  }
 }
