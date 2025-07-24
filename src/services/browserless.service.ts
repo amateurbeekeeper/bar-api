@@ -9,7 +9,7 @@ import {
 export class BrowserlessService {
   private readonly logger = new Logger(BrowserlessService.name);
   private readonly browserlessUrl =
-    "https://production-sfo.browserless.io/chromium/bql";
+    "https://production-sfo.browserless.io/chrome/bql";
   private readonly browserlessToken = process.env.BROWSERLESS_TOKEN;
   private readonly keelaEmbedUrl =
     "https://signup-aus.keela.co/embed/GmjpBXbNAsdcsaRco";
@@ -119,7 +119,7 @@ export class BrowserlessService {
       this.logger.log(`Sending request to Browserless API: ${this.browserlessUrl}`);
       this.logger.log(`Token configured: ${this.browserlessToken ? 'Yes' : 'No'}`);
 
-      const response = await fetch(`${this.browserlessUrl}?token=${this.browserlessToken}`, {
+                        const response = await fetch(`${this.browserlessUrl}?token=${this.browserlessToken}&proxy=residential&proxySticky=true&proxyCountry=us&humanlike=true&blockConsentModals=true`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
