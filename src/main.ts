@@ -37,49 +37,14 @@ async function bootstrap() {
         res.json(document);
       });
       
-      // Serve custom Swagger UI with CDN assets
-      app.use('/docs', (req, res) => {
-        if (req.path === '/docs') {
-          res.send(`
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <title>Bar API Documentation</title>
-                <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css" />
-                <style>
-                    html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
-                    *, *:before, *:after { box-sizing: inherit; }
-                    body { margin:0; background: #fafafa; }
-                </style>
-            </head>
-            <body>
-                <div id="swagger-ui"></div>
-                <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
-                <script>
-                    window.onload = function() {
-                        const ui = SwaggerUIBundle({
-                            url: '/docs-json',
-                            dom_id: '#swagger-ui',
-                            deepLinking: true,
-                            presets: [
-                                SwaggerUIBundle.presets.apis,
-                                SwaggerUIStandalonePreset
-                            ],
-                            plugins: [
-                                SwaggerUIBundle.plugins.DownloadUrl
-                            ],
-                            layout: "StandaloneLayout"
-                        });
-                    };
-                </script>
-            </body>
-            </html>
-          `);
-        } else {
-          res.status(404).send('Not found');
-        }
+      // Use standard Swagger setup but with custom options
+      SwaggerModule.setup("docs", app, document, {
+        swaggerOptions: {
+          persistAuthorization: true,
+        },
+        customSiteTitle: 'Bar API Documentation',
+        customfavIcon: '/favicon.ico',
+        swaggerUrl: '/docs-json',
       });
 
       console.log('Initializing application...');
