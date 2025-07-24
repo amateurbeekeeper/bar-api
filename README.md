@@ -1,4 +1,4 @@
-# �� BAR Keela Bridge – NestJS API with Browserless Automation
+# 🚀 BAR Keela Bridge – NestJS API with Browserless Automation
 
 A production-ready NestJS API that bridges your custom forms to Keela CRM using Browserless GraphQL automation. Built for **Beyond Animal Research (BAR)** to maintain brand consistency while seamlessly submitting data to Keela.
 
@@ -7,9 +7,10 @@ A production-ready NestJS API that bridges your custom forms to Keela CRM using 
 - 🚀 **Zero-Cost Solution** - No paid integrations, no Keela API fees
 - 🎨 **Brand Consistency** - Keep your beautiful Webflow forms, hide Keela embeds
 - 🤖 **Browserless Automation** - Headless browser automation via GraphQL
-- 📚 **Swagger Documentation** - Interactive API docs with try-it-out functionality
+- 📚 **API Documentation** - Clean HTML docs in production, Swagger UI in development
 - ☁️ **Vercel Deployment** - Automatic deployments from GitHub
 - 🔒 **TypeScript** - Full type safety and modern development experience
+- 🧪 **Mock Mode** - Graceful fallback when no Browserless token configured
 
 ## 🏗️ Architecture
 
@@ -45,8 +46,7 @@ bar-api/
 │   ├── types/
 │   │   └── signup.dto.ts          # TypeScript interfaces & Swagger docs
 │   ├── app.module.ts              # Main application module
-│   ├── main.ts                    # Local development entry
-│   └── index.ts                   # Vercel serverless entry
+│   └── main.ts                    # Vercel serverless + local dev entry
 ├── package.json                   # Dependencies and scripts
 ├── vercel.json                    # Vercel deployment configuration
 ├── .vercelignore                  # Deployment optimization
@@ -63,20 +63,14 @@ cd bar-api
 npm install
 ```
 
-### 2. Environment Setup
-```bash
-cp env.example .env
-# Edit .env with your Browserless token and Keela URL
-```
-
-### 3. Local Development
+### 2. Local Development
 ```bash
 npm run start:dev
 # API available at http://localhost:3000
-# Swagger UI at http://localhost:3000/api
+# Swagger UI at http://localhost:3000/docs
 ```
 
-### 4. Test the API
+### 3. Test the API
 ```bash
 curl -X POST http://localhost:3000/signup \
   -H "Content-Type: application/json" \
@@ -90,9 +84,14 @@ curl -X POST http://localhost:3000/signup \
 
 ## 📚 API Documentation
 
-### Swagger UI
-- **Local**: http://localhost:3000/api
-- **Production**: https://your-vercel-domain.vercel.app/api
+### Development (Local)
+- **Swagger UI**: http://localhost:3000/docs
+- **Interactive testing** with full Swagger interface
+
+### Production
+- **HTML Documentation**: https://bar-api.vercel.app/docs
+- **OpenAPI JSON**: https://bar-api.vercel.app/docs-json
+- **Clean, fast loading** - no asset issues
 
 ### Endpoints
 
@@ -103,7 +102,7 @@ Submits user registration data to Keela via Browserless automation.
 ```json
 {
   "firstName": "John",
-  "lastName": "Doe", 
+  "lastName": "Doe",
   "email": "john@example.com",
   "isScientist": true
 }
@@ -119,6 +118,22 @@ Submits user registration data to Keela via Browserless automation.
     "firstName": "John",
     "lastName": "Doe",
     "isScientist": true
+  }
+}
+```
+
+**Mock Response (when no token configured):**
+```json
+{
+  "success": true,
+  "message": "Mock form submission successful (no Browserless token configured)",
+  "data": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "isScientist": true,
+    "submittedAt": "2025-07-24T00:00:00.000Z",
+    "mock": true
   }
 }
 ```
@@ -162,15 +177,14 @@ This repository is connected to Vercel for automatic deployments:
 
 ### Environment Variables
 Set these in your Vercel dashboard:
-- `BROWSERLESS_TOKEN` - Your Browserless API token
-- `BROWSERLESS_URL` - Browserless GraphQL endpoint (optional)
-- `KEELA_EMBED_URL` - Your Keela form URL (optional)
+- `BROWSERLESS_TOKEN` - Your Browserless API token (required for real automation)
+- `BROWSERLESS_URL` - Browserless GraphQL endpoint (optional, defaults to chrome.browserless.io)
+- `KEELA_EMBED_URL` - Your Keela form URL (optional, defaults to BAR's form)
 
-### Manual Deployment
-```bash
-npm run build
-vercel --prod
-```
+### Production URLs
+- **API**: https://bar-api.vercel.app/signup
+- **Documentation**: https://bar-api.vercel.app/docs
+- **OpenAPI Spec**: https://bar-api.vercel.app/docs-json
 
 ## 💰 Cost Analysis
 
@@ -188,15 +202,13 @@ vercel --prod
 - **Environment Variables** - Sensitive data kept secure
 - **CORS Configuration** - Cross-origin request handling
 - **TypeScript** - Type safety throughout the application
+- **Mock Mode** - Graceful fallback for testing without tokens
 
 ## 🧪 Testing
 
 ### Local Testing
-Use the included `test-api.http` file with VS Code REST Client or similar tools.
-
-### API Testing
 ```bash
-# Test successful signup
+# Test successful signup (mock mode)
 curl -X POST http://localhost:3000/signup \
   -H "Content-Type: application/json" \
   -d '{"firstName":"Jane","lastName":"Smith","email":"jane@example.com","isScientist":false}'
@@ -205,6 +217,14 @@ curl -X POST http://localhost:3000/signup \
 curl -X POST http://localhost:3000/signup \
   -H "Content-Type: application/json" \
   -d '{"firstName":"Invalid","email":"invalid-email"}'
+```
+
+### Production Testing
+```bash
+# Test production API
+curl -X POST https://bar-api.vercel.app/signup \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com","isScientist":true}'
 ```
 
 ## 🚧 Development
@@ -222,6 +242,21 @@ npm run test         # Run tests (when added)
 2. Add Swagger decorators for documentation
 3. Update `app.module.ts` with new components
 4. Test locally and deploy
+
+## 🎯 Current Status
+
+### ✅ **Working Features:**
+- **API Endpoints** - POST /signup fully functional
+- **Documentation** - Clean HTML docs in production, Swagger UI in dev
+- **Mock Mode** - Graceful fallback when no Browserless token
+- **Vercel Deployment** - Automatic deployments working
+- **Error Handling** - Comprehensive error responses
+- **TypeScript** - Full type safety
+
+### 🔧 **Ready for Production:**
+- **Add Browserless Token** - Set `BROWSERLESS_TOKEN` in Vercel dashboard
+- **Real Automation** - Will use actual Browserless GraphQL API
+- **Form Submission** - Will submit to real Keela forms
 
 ## 🤝 Contributing
 
