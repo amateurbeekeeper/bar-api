@@ -119,11 +119,10 @@ export class BrowserlessService {
       this.logger.log(`Sending request to Browserless API: ${this.browserlessUrl}`);
       this.logger.log(`Token configured: ${this.browserlessToken ? 'Yes' : 'No'}`);
 
-      const response = await fetch(this.browserlessUrl, {
+      const response = await fetch(`${this.browserlessUrl}?token=${this.browserlessToken}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${this.browserlessToken}`,
         },
         body: JSON.stringify({ query: mutation }),
       });
